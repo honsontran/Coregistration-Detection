@@ -1,3 +1,34 @@
+# Important Notes
+
+- To use Mask-RCNN, the COCO dataset and requirements must be installed. Instead of using `requirements.txt`, use `suggested-requirements.txt` and with a virtual environment.
+
+- Please refer to the [Installation Instructions](#Installation) in this read me (click the link to jump to the section) to get started.
+
+- If you are using Tensorflow with a GPU for acceleration, please download **exactly** [CUDA 10](https://developer.nvidia.com/cuda-10.0-download-archive). Mask-RCNN uses Tensorflow 1.15.0, which uses CUDA 10. Any higher version will not be supported.
+
+# Accessing Datasets for Labeling (Not Clean)
+
+If you would like to help label, please use [LabelMe](https://pypi.org/project/labelme/) to label the images. Please double check the current labeled datasets, or also reach out to double check which images have not been labeled yet.
+
+Please use the following conventions for labeling:
+```
+0 = Catheter
+1 to n = Vertebrae
+```
+
+[Access all datasets here](https://rutgers.box.com/s/07md411xls8pcmryex8vkj5ijg9s4c9o)
+
+# Accessing Datasets for Training Samples(Clean)
+
+Datasets are placed aside from this repository due to storage limitations, and to also limit the amount of files version control needs to keep track of. To use these datasets, please place the these datasets into `/samples/datasets`. These links below are the cleaned datasets for training so far.
+
+[Access the datasets ready for training](https://rutgers.box.com/s/i0upjhzyl1mitg4gzbjvtaq4yi3w6pr6)
+
+# Accessing Trained Models
+
+To access trained models for use, [click here.](https://rutgers.box.com/s/cuojue54dvd13nlngjjxqbvo14jst15h)
+
+
 # Mask R-CNN for Object Detection and Segmentation
 
 This is an implementation of [Mask R-CNN](https://arxiv.org/abs/1703.06870) on Python 3, Keras, and TensorFlow. The model generates bounding boxes and segmentation masks for each instance of an object in the image. It's based on Feature Pyramid Network (FPN) and a ResNet101 backbone.
