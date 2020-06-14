@@ -2,7 +2,7 @@ import os
 import shutil
 import sys
 
-DATASET_DIR ='C:/Users/iFai1/Desktop/Cornell/MRCNN_Iteration/RCNN_data_clean/spine/'
+DATASET_DIR = 'C:/Users/iFai1/Desktop/Cornell/MRCNN_Iteration/RCNN_data_clean/spine/'
 
 image_dir = os.path.join(DATASET_DIR, 'Image/')
 gt_dir = os.path.join(DATASET_DIR, 'mask/')
