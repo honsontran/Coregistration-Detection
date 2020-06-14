@@ -52,7 +52,7 @@ import skimage.io
 from imgaug import augmenters as iaa
 
 # Root directory of the project
-ROOT_DIR = 'C:\\Users\\iFai1\\Desktop\\Cornell\\MRCNN_Iteration\\Mask_RCNN\\'
+ROOT_DIR = 'C:\\Users\\iFai1\\Documents\\GitHub\\Coregistration-Detection\\Detection\\Mask-RCNN\\'
 
 # Import Mask RCNN
 sys.path.append(ROOT_DIR)  # To find local version of the library
@@ -86,7 +86,7 @@ class SpineConfig(Config):
     IMAGES_PER_GPU = 1
 
     # Number of classes (including background)
-    NUM_CLASSES = 1 + 3  # Background + spine1, 2, and 3
+    NUM_CLASSES = 1 + 4  # Background + spine1, 2, and 3
 
     # Number of training and validation steps per epoch
     # STEPS_PER_EPOCH = (657 - len(VAL_IMAGE_IDS)) // IMAGES_PER_GPU
@@ -171,13 +171,16 @@ class SpineDataset(utils.Dataset):
                 * train: stage1_train excluding validation images
                 * val: validation images from VAL_IMAGE_IDS
         """
+
+        counter = 0
+
         # Add classes.
         # Naming the dataset spine, and the class spine
-
         self.add_class("spine", 1, "v1")
         self.add_class("spine", 2, "v2")
         self.add_class("spine", 3, "v3")
-        
+        self.add_class("spine", 4, "v4")
+
         # Which subset?
         # "val": use hard-coded list above
         # "train": use data from stage1_train minus the hard-coded list above
@@ -192,10 +195,12 @@ class SpineDataset(utils.Dataset):
 
         for image_id in next(os.walk(dataset_dir))[2]:
             if image_id.endswith('tif'):
+                counter += 1
                 self.add_image(
                     "spine",
                     image_id=image_id,
                     path=os.path.join(dataset_dir, image_id))
+        print('Total loaded: ', counter)        
 
     def load_mask(self, image_id):
         """Generate instance masks for an image.
@@ -206,7 +211,6 @@ class SpineDataset(utils.Dataset):
         """
         info = self.image_info[image_id]
 
-        
         # Get mask directory from image path
         mask_dir = os.path.join(os.path.dirname(os.path.dirname(info['path'])))
         mask_dir = os.path.dirname(mask_dir)
@@ -215,7 +219,7 @@ class SpineDataset(utils.Dataset):
         # Read mask files from .png image
         mask = []
         class_ids = []
-        found = False
+
         for folder in next(os.walk(mask_dir))[1]:
             for file in next(os.walk(os.path.join(mask_dir, folder)))[2]:
 
@@ -223,18 +227,14 @@ class SpineDataset(utils.Dataset):
                 # Note: All classes are named 'Class#', so we're going to take the last char
                 # of the folder name and cast it to an integer for our class_id
                 if info['id'] == file:
-                    found = True
                     class_ids.append(int(folder[-1]))
                     # Append our mask for this particular class
+                    # print('Appending mask: ', os.path.join(mask_dir, folder, file))
                     m = skimage.io.imread(os.path.join(mask_dir, folder, file)).astype(np.bool)
                     mask.append(m)
 
-            # If we found nothing for all classes, we still have your BG
-#             if not found:
-#                 mask.append(np.zeros((IMAGE_MAX_DIM, IMAGE_MAX_DIM), dtype=bool))
-            found = False
-
         # Convert the list into an np array, and then return everything back
+        # print(mask)
         mask = np.stack(mask, axis=-1)
         class_ids = np.array(class_ids, dtype=np.int32)
         return mask, class_ids
