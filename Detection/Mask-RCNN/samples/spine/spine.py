@@ -24,6 +24,11 @@ Usage: import the module (see Jupyter notebooks for examples), or run from
     # Generate submission file
     python3 spine.py detect --dataset=/path/to/dataset --subset=train --weights=<last or /path/to/weights.h5>
 """
+import tensorflow as tf
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+config.gpu_options.per_process_gpu_memory_fraction = 0.4
+tf.Session(config=config)
 
 # Set matplotlib backend
 # This has to be done before other importa that might
@@ -44,7 +49,8 @@ import skimage.io
 from imgaug import augmenters as iaa
 
 # Root directory of the project
-ROOT_DIR = os.path.join(os.path.abspath("."), 'drive', 'My Drive', 'Mask_RCNN')
+# ROOT_DIR = os.path.join(os.path.abspath("."), 'drive', 'My Drive', 'Mask_RCNN')
+ROOT_DIR = 'C:\\Users\\iFai1\\Documents\\GitHub\\Coregistration-Detection\\Detection\\Mask-RCNN\\'
 
 # Import Mask RCNN
 sys.path.append(ROOT_DIR)  # To find local version of the library
@@ -62,8 +68,8 @@ DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
 
 # Results directory
 # Save submission files here
-RESULTS_DIR = os.path.join(ROOT_DIR, "results/spine/")
-
+# RESULTS_DIR = os.path.join(ROOT_DIR, "results/spine/")
+RESULTS_DIR = os.path.join(ROOT_DIR, "result\\spine")
 
 ############################################################
 #  Configurations
@@ -183,7 +189,7 @@ class SpineDataset(utils.Dataset):
         for p_dir in next(os.walk(dataset_dir))[1]:
         #     for c_dir in next(os.walk(os.path.join(dataset_dir, p_dir)))[1]:
             for image_id in next(os.walk(os.path.join(dataset_dir, p_dir)))[2]:
-                if image_id.endswith('bmp'):
+                if image_id.endswith('tif'):
                     self.add_image(
                         "spine",
                         image_id=image_id,
@@ -205,7 +211,7 @@ class SpineDataset(utils.Dataset):
         # Read mask files from .png image
         mask = []
         for f in next(os.walk(mask_dir))[2]:
-            if f.startswith(info['id']) and f.endswith(".bmp"):
+            if f.startswith(info['id']) and f.endswith(".tif"):
                 m = skimage.io.imread(os.path.join(mask_dir, f)).astype(np.bool)
                 mask.append(m)
         # Convert to np array
